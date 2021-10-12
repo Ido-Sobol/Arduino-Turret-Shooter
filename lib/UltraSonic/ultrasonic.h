@@ -11,5 +11,7 @@ class UltraSonic
   private:
    int _trigPin;
    int _echoPin;
+   long duration;
+   double distance;
 };
 #endif

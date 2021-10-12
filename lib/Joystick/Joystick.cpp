@@ -9,6 +9,7 @@ void Joystick::JoystickInit(int VRx , int VRy , int SW)
    _VRx = VRx;
    _VRy = VRy;
    _SW = SW;
+       Serial.println("joystick initialized!");
 }
 
 double Joystick::getX()
