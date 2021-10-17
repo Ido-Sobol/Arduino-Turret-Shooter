@@ -39,15 +39,14 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
-
+  // put your main code here, to run repeatedly
+  
     //deciding which pin to use:
     isTurretReversed = joystick.getX() > 0 ? false : true;
     turretCurrentPin = isTurretReversed ? turretReversePin : turretForwardPin;
-
-
+  
+    //moving the motors:
     shooter.ShooterMovement(ultrasonic.getDistance() * shooterMagicNumber);
     turret.turretMovement(turretCurrentPin , joystick.getX()); 
-
+    
 }
