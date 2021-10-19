@@ -5,48 +5,48 @@
 #include <turret.h>
 #include <shooter.h>
 //creating all of the objects:
-  Joystick joystick;
-  UltraSonic ultrasonic;
-  Turret turret;
-  Shooter shooter;
+Joystick joystick;
+UltraSonic ultrasonic;
+Turret turret;
+Shooter shooter;
 
-  //defining all of the pins:
-  const int buttonPin = 0;
-  const int yPin = 0;
-  const int xPin = 0;
-  const int trigPin = 0;
-  const int echoPin = 0;
-  const int turretForwardPin = 0;
-  const int turretReversePin = 0;
-  const int shooterPin = 0;
+//defining all of the pins:
+const int buttonPin = 0;        //digital in
+const int yPin = 0;             //analog in
+const int xPin = 0;             //analog in
+const int trigPin = 0;          //pwm
+const int echoPin = 0;          //analog in
+const int turretForwardPin = 0; //pwm
+const int turretReversePin = 0; //pwm
+const int shooterPin = 0;       //pwm
 
+//turret:
+bool isTurretReversed = false;
+int turretCurrentPin;
 
-  //turret:
-  bool isTurretReversed = false;
-  int turretCurrentPin;
+//shooter:
+double shooterPower;
+const double shooterMagicNumber = 0;
 
-  //shooter:
-  double shooterPower;
-  const double shooterMagicNumber = 0;
-
-void setup() {
+void setup()
+{
   // put your setup code here, to run once:
   Serial.begin(9600);
-  joystick.JoystickInit(xPin , yPin , buttonPin);
-  ultrasonic.UltraSonicInit(trigPin , echoPin);
-  turret.turretInit(turretForwardPin,turretReversePin);
+  joystick.JoystickInit(xPin, yPin, buttonPin);
+  ultrasonic.UltraSonicInit(trigPin, echoPin);
+  turret.turretInit(turretForwardPin, turretReversePin);
   shooter.ShooterInit(shooterPin);
 }
 
-void loop() {
+void loop()
+{
   // put your main code here, to run repeatedly
   
-    //deciding which pin to use:
-    isTurretReversed = joystick.getX() > 0 ? false : true;
-    turretCurrentPin = isTurretReversed ? turretReversePin : turretForwardPin;
-  
-    //moving the motors:
-    shooter.ShooterMovement(ultrasonic.getDistance() * shooterMagicNumber);
-    turret.turretMovement(turretCurrentPin , joystick.getX()); 
-    
+  //deciding which pin to use:
+  isTurretReversed = joystick.getX() > 0 ? false : true;
+  turretCurrentPin = isTurretReversed ? turretReversePin : turretForwardPin;
+
+  //moving the motors:
+  shooter.ShooterMovement(ultrasonic.getDistance() * shooterMagicNumber);
+  turret.turretMovement(turretCurrentPin, joystick.getX());
 }
