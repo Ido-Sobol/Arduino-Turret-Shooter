@@ -4,11 +4,16 @@
 #include <ultrasonic.h>
 #include <turret.h>
 #include <shooter.h>
+#include <LED.h>
+#include <Servo.h>
+
 //creating all of the objects:
 Joystick joystick;
 UltraSonic ultrasonic;
 Turret turret;
 Shooter shooter;
+LED led;
+Servo shooterServo;
 
 //defining all of the pins:
 const int buttonPin = 0;        //digital in
@@ -19,6 +24,10 @@ const int echoPin = 0;          //analog in
 const int turretForwardPin = 0; //pwm
 const int turretReversePin = 0; //pwm
 const int shooterPin = 0;       //pwm
+const int redPin = 0;           //digital out
+const int greenPin = 0;         //digital out
+const int bluePin = 0;          //digital out
+const int servoPin = 0;         //pwm
 
 //turret:
 bool isTurretReversed = false;
@@ -28,6 +37,13 @@ int turretCurrentPin;
 double shooterPower;
 const double shooterMagicNumber = 0;
 
+bool joystickButtonLastState;
+
+//Timing vars:
+double shooterWheelsStartTime;
+double servoMovingTime;
+double currentTime;
+
 void setup()
 {
   // put your setup code here, to run once:
@@ -36,17 +52,42 @@ void setup()
   ultrasonic.UltraSonicInit(trigPin, echoPin);
   turret.turretInit(turretForwardPin, turretReversePin);
   shooter.ShooterInit(shooterPin);
+  led.ledInit(redPin, greenPin, bluePin);
+  shooterServo.attach(servoPin);
 }
 
 void loop()
 {
   // put your main code here, to run repeatedly
-  
+
+  shooterServo.write(0);
+  shooter.ShooterMovement(0);
+
+  currentTime = millis();
+  led.setColor(led.BLUE);
+
   //deciding which pin to use:
   isTurretReversed = joystick.getX() > 0 ? false : true;
   turretCurrentPin = isTurretReversed ? turretReversePin : turretForwardPin;
 
-  //moving the motors:
-  shooter.ShooterMovement(ultrasonic.getDistance() * shooterMagicNumber);
   turret.turretMovement(turretCurrentPin, joystick.getX());
+
+  if (!joystick.getButton() && joystickButtonLastState)
+  {
+    shooterWheelsStartTime = currentTime;
+    while (currentTime - shooterWheelsStartTime <= 5000)
+    {
+      shooter.ShooterMovement(ultrasonic.getDistance() * shooterMagicNumber);
+      led.setColor(led.RED);
+    }
+
+    servoMovingTime = currentTime;
+    while (currentTime - servoMovingTime <= 3500)
+    {
+      led.setColor(led.GREEN);
+      shooterServo.write(90);
+      shooter.ShooterMovement(ultrasonic.getDistance() * shooterMagicNumber);
+    }
+  }
+  joystickButtonLastState = joystick.getButton();
 }
