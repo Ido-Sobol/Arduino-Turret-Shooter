@@ -39,9 +39,15 @@ const double shooterMagicNumber = 0;
 
 bool joystickButtonLastState;
 
+const int servoBlockPosition = 0;
+const int servoFreePosition = 0;
+
 //Timing vars:
 double shooterWheelsStartTime;
-double servoMovingTime;
+const double shooterWheelsDelayTime;
+
+double servoMovingTime = 0;
+const double servoMovingDelayTime = 0;
 
 void setup()
 {
@@ -59,7 +65,7 @@ void loop()
 {
   // put your main code here, to run repeatedly
 
-  shooterServo.write(0);
+  shooterServo.write(servoBlockPosition);
   shooter.ShooterMovement(0);
   led.setColor(led.BLUE);
 
@@ -72,18 +78,18 @@ void loop()
   if (!joystick.getButton() && joystickButtonLastState)
   {
     shooterWheelsStartTime = millis();
-    while (millis() - shooterWheelsStartTime <= 5000)
+    while (millis() - shooterWheelsStartTime <= shooterWheelsDelayTime)
     {
       shooter.ShooterMovement(ultrasonic.getDistance() * shooterMagicNumber);
       led.setColor(led.RED);
     }
 
     servoMovingTime = millis();
-    while (millis() - servoMovingTime <= 3500)
+    while (millis() - servoMovingTime <= servoMovingDelayTime)
     {
 
       led.setColor(led.GREEN);
-      shooterServo.write(90);
+      shooterServo.write(servoFreePosition);
       shooter.ShooterMovement(ultrasonic.getDistance() * shooterMagicNumber);
     }
   }
