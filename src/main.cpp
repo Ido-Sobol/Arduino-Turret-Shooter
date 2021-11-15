@@ -42,7 +42,6 @@ bool joystickButtonLastState;
 //Timing vars:
 double shooterWheelsStartTime;
 double servoMovingTime;
-double currentTime;
 
 void setup()
 {
@@ -62,8 +61,6 @@ void loop()
 
   shooterServo.write(0);
   shooter.ShooterMovement(0);
-
-  currentTime = millis();
   led.setColor(led.BLUE);
 
   //deciding which pin to use:
@@ -74,16 +71,17 @@ void loop()
 
   if (!joystick.getButton() && joystickButtonLastState)
   {
-    shooterWheelsStartTime = currentTime;
-    while (currentTime - shooterWheelsStartTime <= 5000)
+    shooterWheelsStartTime = millis();
+    while (millis() - shooterWheelsStartTime <= 5000)
     {
       shooter.ShooterMovement(ultrasonic.getDistance() * shooterMagicNumber);
       led.setColor(led.RED);
     }
 
-    servoMovingTime = currentTime;
-    while (currentTime - servoMovingTime <= 3500)
+    servoMovingTime = millis();
+    while (millis() - servoMovingTime <= 3500)
     {
+
       led.setColor(led.GREEN);
       shooterServo.write(90);
       shooter.ShooterMovement(ultrasonic.getDistance() * shooterMagicNumber);
