@@ -16,9 +16,9 @@ LED led;
 Servo shooterServo;
 
 //defining all of the pins:
-const int buttonPin = 0;        //digital in
-const int yPin = 0;             //analog in
-const int xPin = 0;             //analog in
+const int buttonPin = 12;       //digital in
+const int yPin = A0;            //analog in
+const int xPin = A1;            //analog in
 const int trigPin = 0;          //pwm
 const int echoPin = 0;          //analog in
 const int turretForwardPin = 0; //pwm
@@ -28,10 +28,6 @@ const int redPin = 0;           //digital out
 const int greenPin = 0;         //digital out
 const int bluePin = 0;          //digital out
 const int servoPin = 0;         //pwm
-
-//turret:
-bool isTurretReversed = false;
-int turretCurrentPin;
 
 //shooter:
 double shooterPower;
@@ -64,16 +60,15 @@ void setup()
 void loop()
 {
   // put your main code here, to run repeatedly
-
   shooterServo.write(servoBlockPosition);
   shooter.ShooterMovement(0);
   led.setColor(led.BLUE);
 
-  //deciding which pin to use:
-  isTurretReversed = joystick.getX() > 0 ? false : true;
-  turretCurrentPin = isTurretReversed ? turretReversePin : turretForwardPin;
-
-  turret.turretMovement(turretCurrentPin, joystick.getX());
+  turret.turretMovement(joystick.getX() > 512
+                        ? turretForwardPin,
+                        (joystick.getX() - 512) * (255 / 1023)
+                        : turretReversePin,
+                        joystick.getX() * (255 / 1023));
 
   if (!joystick.getButton() && joystickButtonLastState)
   {
