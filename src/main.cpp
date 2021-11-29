@@ -6,7 +6,6 @@
 #include <shooter.h>
 #include <LED.h>
 #include <Servo.h>
-
 //creating all of the objects:
 Joystick joystick;
 UltraSonic ultrasonic;
@@ -16,18 +15,18 @@ LED led;
 Servo shooterServo;
 
 //defining all of the pins:
-const int buttonPin = 12;       //digital in
-const int yPin = A0;            //analog in
-const int xPin = A1;            //analog in
-const int trigPin = 0;          //pwm
-const int echoPin = 0;          //analog in
-const int turretForwardPin = 0; //pwm
-const int turretReversePin = 0; //pwm
-const int shooterPin = 0;       //pwm
-const int redPin = 0;           //digital out
-const int greenPin = 0;         //digital out
-const int bluePin = 0;          //digital out
-const int servoPin = 0;         //pwm
+const int buttonPin = 5;         //digital in
+const int yPin = A0;             //analog in
+const int xPin = A1;             //analog in
+const int trigPin = 0;           //pwm
+const int echoPin = 0;           //analog in
+const int turretForwardPin = 10; //pwm
+const int turretReversePin = 11; //pwm
+const int shooterPin = 0;        //pwm
+const int redPin = 0;            //digital out
+const int greenPin = 0;          //digital out
+const int bluePin = 0;           //digital out
+const int servoPin = 0;          //pwm
 
 //shooter:
 double shooterPower;
@@ -72,6 +71,7 @@ void loop()
 
   if (!joystick.getButton() && joystickButtonLastState)
   {
+    Serial.println("State change detection!");
     shooterWheelsStartTime = millis();
     while (millis() - shooterWheelsStartTime <= shooterWheelsDelayTime)
     {
