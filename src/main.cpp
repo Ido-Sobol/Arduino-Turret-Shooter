@@ -1,23 +1,24 @@
 //importing the libraries:
 #include <Arduino.h>
-#include <Joystick.h>
 #include <ultrasonic.h>
 #include <turret.h>
 #include <shooter.h>
 #include <LED.h>
 #include <Servo.h>
+#include <Controls.h>
 //creating all of the objects:
-Joystick joystick;
 UltraSonic ultrasonic;
 Turret turret;
 Shooter shooter;
 LED led;
 Servo shooterServo;
+Controls controls;
 
 //defining all of the pins:
-const int buttonPin = 5;         //digital in
-const int yPin = A0;             //analog in
-const int xPin = A1;             //analog in
+const int rightButtonPin = 0;    //digital in
+const int leftButtonPin = 0;     //digital in
+const int shootButtonPin = 0;    //digital in
+const int potenPin = 0;          //analog in
 const int trigPin = 0;           //pwm
 const int echoPin = 0;           //analog in
 const int turretForwardPin = 10; //pwm
@@ -32,14 +33,14 @@ const int servoPin = 0;          //pwm
 double shooterPower;
 const double shooterMagicNumber = 0;
 
-bool joystickButtonLastState;
-
 const int servoBlockPosition = 0;
 const int servoFreePosition = 0;
 
 //Timing vars:
 double shooterWheelsStartTime;
 const double shooterWheelsDelayTime;
+
+bool shootButtonLastState;
 
 double servoMovingTime = 0;
 const double servoMovingDelayTime = 0;
@@ -48,12 +49,12 @@ void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  joystick.JoystickInit(xPin, yPin, buttonPin);
   ultrasonic.UltraSonicInit(trigPin, echoPin);
   turret.turretInit(turretForwardPin, turretReversePin);
   shooter.ShooterInit(shooterPin);
   led.ledInit(redPin, greenPin, bluePin);
   shooterServo.attach(servoPin);
+  controls.ControlsInit(rightButtonPin, leftButtonPin, shootButtonPin, potenPin);
 }
 
 void loop()
@@ -63,13 +64,12 @@ void loop()
   shooter.ShooterMovement(0);
   led.setColor(led.BLUE);
 
-  turret.turretMovement(joystick.getX() > 512
-                        ? turretForwardPin,
-                        (joystick.getX() - 512) * (255 / 1023)
-                        : turretReversePin,
-                        joystick.getX() * (255 / 1023));
+  turret.turretMovement(!controls.getButton(rightButtonPin) ? rightButtonPin : !controls.getButton(leftButtonPin) ? leftButtonPin
+                                                                                                                  : -1 //pin that does nothing
+                        ,
+                        controls.getPotentiometer(potenPin) * (1023 / 255));
 
-  if (!joystick.getButton() && joystickButtonLastState)
+  if (!controls.getButton(shootButtonPin) && shootButtonLastState)
   {
     Serial.println("State change detection!");
     shooterWheelsStartTime = millis();
@@ -88,5 +88,5 @@ void loop()
       shooter.ShooterMovement(ultrasonic.getDistance() * shooterMagicNumber);
     }
   }
-  joystickButtonLastState = joystick.getButton();
+  shootButtonLastState = controls.getButton(shootButtonPin);
 }
