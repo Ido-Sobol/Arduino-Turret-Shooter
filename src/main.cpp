@@ -15,10 +15,10 @@ Servo shooterServo;
 Controls controls;
 
 //defining all of the pins:
-const int rightButtonPin = 0;    //digital in
-const int leftButtonPin = 0;     //digital in
+const int rightButtonPin = 7;    //digital in
+const int leftButtonPin = 6;     //digital in
 const int shootButtonPin = 0;    //digital in
-const int potenPin = 0;          //analog in
+const int potenPin = A0;         //analog in
 const int trigPin = 0;           //pwm
 const int echoPin = 0;           //analog in
 const int turretForwardPin = 10; //pwm
@@ -38,9 +38,11 @@ const int servoFreePosition = 0;
 
 //Timing vars:
 double shooterWheelsStartTime;
-const double shooterWheelsDelayTime;
-
+const double shooterWheelsDelayTime = 0;
 bool shootButtonLastState;
+
+int turretCurrentPin;
+double turretPower;
 
 double servoMovingTime = 0;
 const double servoMovingDelayTime = 0;
@@ -64,10 +66,25 @@ void loop()
   shooter.ShooterMovement(0);
   led.setColor(led.BLUE);
 
-  turret.turretMovement(!controls.getButton(rightButtonPin) ? rightButtonPin : !controls.getButton(leftButtonPin) ? leftButtonPin
-                                                                                                                  : -1 //pin that does nothing
-                        ,
-                        controls.getPotentiometer(potenPin) * (1023 / 255));
+    turretPower = (controls.getPotentiometer(potenPin));
+    if (controls.getButton(rightButtonPin))
+    {
+      turret.turretMovement(turretForwardPin, turretPower);
+      turret.turretMovement(turretReversePin, 0);
+    }
+    else if (controls.getButton(leftButtonPin))
+    {
+      turret.turretMovement(turretReversePin, turretPower);
+      turret.turretMovement(turretForwardPin, 0);
+    }
+    else
+    {
+      turret.turretMovement(turretReversePin, 0);
+      turret.turretMovement(turretForwardPin, 0);
+    }
+  
+
+  /*controls.getPotentiometer(potenPin) * (1023 / 255))*/
 
   if (!controls.getButton(shootButtonPin) && shootButtonLastState)
   {
