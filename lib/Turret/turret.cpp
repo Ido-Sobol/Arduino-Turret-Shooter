@@ -12,5 +12,5 @@ void Turret::turretInit(int forwardPin, int reversedPin)
 
 void Turret::turretMovement(int pin, int power)
 {
-    digitalWrite(pin, abs(power));
+    analogWrite(pin, 255);
 }
