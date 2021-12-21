@@ -15,8 +15,6 @@ Servo shooterServo;
 Controls controls;
 
 //defining all of the pins:
-const int rightButtonPin = 7;    //digital in
-const int leftButtonPin = 6;     //digital in
 const int shootButtonPin = 0;    //digital in
 const int potenPin = A0;         //analog in
 const int trigPin = 3;           //pwm
@@ -32,11 +30,14 @@ const int servoPin = 0;          //pwm
 //shooter:
 double shooterPower;
 const double shooterMagicNumber = 0;
+bool lastButtonState;
 
 //Timing vars:
 double shooterWheelsStartTime;
 const double shooterWheelsDelayTime = 4000;
-bool shootButtonLastState;
+
+double timeSinceLastSwitch = 0;
+const double switchDelay = 5000;
 
 int turretCurrentPin;
 double turretPower;
@@ -55,30 +56,44 @@ void setup()
   shooter.ShooterInit(shooterPin);
   led.ledInit(redPin, greenPin, bluePin);
   shooterServo.attach(servoPin);
-  controls.ControlsInit(rightButtonPin, leftButtonPin, shootButtonPin, potenPin);
+  controls.ControlsInit(shootButtonPin, potenPin);
   led.setColor(led.BLUE);
 }
 
 void loop()
 {
   // put your main code here, to run repeatedly
-  turret.turretMovement(turretForwardPin, turretPower);
-  currentDistance = ultrasonic.getDistance();
-  if (abs(currentDistance = lastDistanceMeasured))
+  if (controls.getButton(shootButtonPin) && lastButtonState)
   {
-    detectedPossibleTarget = true;
-    targetCount++;
+    if (millis() - timeSinceLastSwitch <= switchDelay)
+    {
+      if (turretCurrentPin == turretForwardPin)
+      {
+        turretCurrentPin = turretReversePin;
+      }
+      else
+      {
+        turretCurrentPin = turretForwardPin;
+      }
+    }
+    turret.turretMovement(turretCurrentPin, turretPower);
+    currentDistance = ultrasonic.getDistance();
+    if (abs(currentDistance - lastDistanceMeasured) > 100)
+    {
+      detectedPossibleTarget = true;
+      targetCount++;
+    }
+    if (detectedPossibleTarget && targetCount >= 10)
+    {
+      led.setColor(led.RED);
+      shooter.ShooterMovement(80);
+      shooterWheelsStartTime = millis();
+    }
+    if (millis() - shooterWheelsStartTime <= shooterWheelsDelayTime)
+    {
+      led.setColor(led.GREEN);
+    }
+    lastDistanceMeasured = currentDistance;
+    lastButtonState = controls.getButton(shootButtonPin);
   }
-  if (detectedPossibleTarget && targetCount >= 10)
-  {
-    led.setColor(led.RED);
-    shooter.ShooterMovement(80);
-    shooterWheelsStartTime = millis();
-  }
-  if (millis() - shooterWheelsStartTime <= shooterWheelsDelayTime)
-  {
-    led.setColor(led.GREEN);
-  }
-
-  lastDistanceMeasured = currentDistance;
 }

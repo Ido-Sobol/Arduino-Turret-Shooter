@@ -6,7 +6,7 @@
 class Controls
 {
 public:
-  void ControlsInit(int rightButton, int leftButton, int shootbutton, int potenPin);
+  void ControlsInit(int shootbutton, int potenPin);
   bool getButton(int pin);
   double getPotentiometer(int pin);
 
