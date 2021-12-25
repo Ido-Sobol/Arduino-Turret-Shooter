@@ -44,6 +44,7 @@ double turretPower;
 
 double currentDistance;
 double lastDistanceMeasured;
+double targetDistance;
 bool detectedPossibleTarget = false;
 int targetCount = 0;
 
@@ -63,28 +64,33 @@ void setup()
 void loop()
 {
   // put your main code here, to run repeatedly
+  if (millis() - timeSinceLastSwitch <= switchDelay)
+  {
+    if (turretCurrentPin == turretForwardPin)
+    {
+      turretCurrentPin = turretReversePin;
+    }
+    else
+    {
+      turretCurrentPin = turretForwardPin;
+    }
+  }
+  turret.turretMovement(turretCurrentPin, turretPower);
   if (controls.getButton(shootButtonPin) && lastButtonState)
   {
-    if (millis() - timeSinceLastSwitch <= switchDelay)
-    {
-      if (turretCurrentPin == turretForwardPin)
-      {
-        turretCurrentPin = turretReversePin;
-      }
-      else
-      {
-        turretCurrentPin = turretForwardPin;
-      }
-    }
-    turret.turretMovement(turretCurrentPin, turretPower);
     currentDistance = ultrasonic.getDistance();
     if (abs(currentDistance - lastDistanceMeasured) > 100)
     {
       detectedPossibleTarget = true;
-      targetCount++;
+
+      while (abs(targetDistance - currentDistance) < 20)
+      {
+        targetCount++;
+      }
     }
     if (detectedPossibleTarget && targetCount >= 10)
     {
+      targetCount = 0;
       led.setColor(led.RED);
       shooter.ShooterMovement(80);
       shooterWheelsStartTime = millis();
