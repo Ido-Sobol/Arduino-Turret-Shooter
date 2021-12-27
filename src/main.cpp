@@ -4,14 +4,12 @@
 #include <turret.h>
 #include <shooter.h>
 #include <LED.h>
-#include <Servo.h>
 #include <Controls.h>
 //creating all of the objects:
 UltraSonic ultrasonic;
 Turret turret;
 Shooter shooter;
 LED led;
-Servo shooterServo;
 Controls controls;
 
 //defining all of the pins:
@@ -25,8 +23,6 @@ const int shooterPin = 5;        //pwm
 const int redPin = 0;            //digital out
 const int greenPin = 0;          //digital out
 const int bluePin = 0;           //digital out
-const int servoPin = 0;          //pwm
-
 //shooter:
 double shooterPower;
 const double shooterMagicNumber = 0;
@@ -57,19 +53,12 @@ void setup()
   turret.turretInit(turretForwardPin, turretReversePin);
   shooter.ShooterInit(shooterPin);
   led.ledInit(redPin, greenPin, bluePin);
-  shooterServo.attach(servoPin);
   controls.ControlsInit(shootButtonPin, potenPin);
   led.setColor(led.BLUE);
 }
 
 void loop()
-{
-  while (1)
-  {
-    shooter.ShooterMovement(200);
-  }
-
-  // put your main code here, to run repeatedly
+{ // put your main code here, to run repeatedly
   if (millis() - timeSinceLastSwitch <= switchDelay)
   {
     if (turretCurrentPin == turretForwardPin)
@@ -88,6 +77,7 @@ void loop()
     if (abs(currentDistance - lastDistanceMeasured) > 100)
     {
       detectedPossibleTarget = true;
+      led.setColor(led.WHITE);
     }
     if (abs(targetDistance - currentDistance) < 20)
     {
