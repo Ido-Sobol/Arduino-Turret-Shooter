@@ -21,7 +21,7 @@ const int trigPin = 3;           //pwm
 const int echoPin = 2;           //analog in
 const int turretForwardPin = 10; //pwm
 const int turretReversePin = 11; //pwm
-const int shooterPin = 0;        //pwm
+const int shooterPin = 5;        //pwm
 const int redPin = 0;            //digital out
 const int greenPin = 0;          //digital out
 const int bluePin = 0;           //digital out
@@ -36,8 +36,8 @@ bool lastButtonState;
 double shooterWheelsStartTime;
 const double shooterWheelsDelayTime = 4000;
 
-double timeSinceLastSwitch = 0;
-const double switchDelay = 5000;
+double timeSinceLastSwitch = 5000; //TODO: need to check this logic
+const double switchDelay = 4000;
 
 int turretCurrentPin;
 double turretPower;
@@ -51,6 +51,7 @@ int targetCount = 0;
 void setup()
 {
   // put your setup code here, to run once:
+  delay(2000);
   Serial.begin(9600);
   ultrasonic.UltraSonicInit(trigPin, echoPin);
   turret.turretInit(turretForwardPin, turretReversePin);
@@ -63,6 +64,11 @@ void setup()
 
 void loop()
 {
+  while (1)
+  {
+    shooter.ShooterMovement(200);
+  }
+
   // put your main code here, to run repeatedly
   if (millis() - timeSinceLastSwitch <= switchDelay)
   {
@@ -82,11 +88,10 @@ void loop()
     if (abs(currentDistance - lastDistanceMeasured) > 100)
     {
       detectedPossibleTarget = true;
-
-      while (abs(targetDistance - currentDistance) < 20)
-      {
-        targetCount++;
-      }
+    }
+    if (abs(targetDistance - currentDistance) < 20)
+    {
+      targetCount++;
     }
     if (detectedPossibleTarget && targetCount >= 10)
     {
