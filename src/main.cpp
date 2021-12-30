@@ -16,13 +16,13 @@ Controls controls;
 const int shootButtonPin = 0;    //digital in
 const int potenPin = A0;         //analog in
 const int trigPin = 3;           //pwm
-const int echoPin = 2;           //analog in
+const int echoPin = 2;           //digital out
 const int turretForwardPin = 10; //pwm
 const int turretReversePin = 11; //pwm
 const int shooterPin = 5;        //pwm
-const int redPin = 0;            //digital out
-const int greenPin = 0;          //digital out
-const int bluePin = 0;           //digital out
+const int redPin = 8;            //digital out
+const int greenPin = 12;         //digital out
+const int bluePin = 13;          //digital out
 //shooter:
 double shooterPower;
 const double shooterMagicNumber = 0;
@@ -55,10 +55,12 @@ void setup()
   led.ledInit(redPin, greenPin, bluePin);
   controls.ControlsInit(shootButtonPin, potenPin);
   led.setColor(led.BLUE);
+  pinMode(5, OUTPUT);
 }
 
 void loop()
-{ // put your main code here, to run repeatedly
+{
+  // put your main code here, to run repeatedly
   if (millis() - timeSinceLastSwitch <= switchDelay)
   {
     if (turretCurrentPin == turretForwardPin)
