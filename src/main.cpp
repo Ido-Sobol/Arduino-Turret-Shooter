@@ -19,7 +19,7 @@ const int trigPin = 3;           //pwm
 const int echoPin = 2;           //digital out
 const int turretForwardPin = 10; //pwm
 const int turretReversePin = 11; //pwm
-const int shooterPin = 5;        //pwm
+const int shooterPin = 6;        //pwm
 const int redPin = 8;            //digital out
 const int greenPin = 12;         //digital out
 const int bluePin = 13;          //digital out
@@ -37,7 +37,7 @@ const double switchDelay = 4000;
 
 int turretCurrentPin;
 double turretPower;
-
+double shooterStartTime;
 double currentDistance;
 double lastDistanceMeasured;
 double targetDistance;
@@ -60,42 +60,24 @@ void setup()
 void loop()
 {
   // put your main code here, to run repeatedly
-  if (millis() - timeSinceLastSwitch <= switchDelay)
+  if (ultrasonic.getDistance() < 150)
   {
-    if (turretCurrentPin == turretForwardPin)
-    {
-      turretCurrentPin = turretReversePin;
-    }
-    else
-    {
-      turretCurrentPin = turretForwardPin;
-    }
-  }
-  turret.turretMovement(turretCurrentPin, turretPower);
-  if (controls.getButton(shootButtonPin) && lastButtonState)
-  {
-    currentDistance = ultrasonic.getDistance();
-    if (abs(currentDistance - lastDistanceMeasured) > 100)
-    {
-      detectedPossibleTarget = true;
-      led.setColor(led.WHITE);
-    }
-    if (abs(targetDistance - currentDistance) < 20)
-    {
-      targetCount++;
-    }
-    if (detectedPossibleTarget && targetCount >= 10)
-    {
-      targetCount = 0;
-      led.setColor(led.RED);
-      shooter.ShooterMovement(80);
-      shooterWheelsStartTime = millis();
-    }
-    if (millis() - shooterWheelsStartTime <= shooterWheelsDelayTime)
+    led.setColor(led.BLUE);
+    shooter.ShooterMovement(200);
+    Serial.println("shooting");
+    shooterStartTime = millis();
+    if (millis() - shooterStartTime > 1000)
     {
       led.setColor(led.GREEN);
     }
-    lastDistanceMeasured = currentDistance;
-    lastButtonState = controls.getButton(shootButtonPin);
   }
+  if (ultrasonic.getDistance() >= 150)
+  {
+    led.setColor(led.RED);
+    shooter.ShooterMovement(0);
+    Serial.println("not shooting");
+    delay(1000);
+  }
+  Serial.print("current Distance: ");
+  Serial.println(ultrasonic.getDistance());
 }
