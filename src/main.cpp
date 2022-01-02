@@ -43,6 +43,9 @@ double lastDistanceMeasured;
 double targetDistance;
 bool detectedPossibleTarget = false;
 int targetCount = 0;
+bool isShooting;
+bool lastIsShooting;
+int noTargetCount;
 
 void setup()
 {
@@ -62,22 +65,32 @@ void loop()
   // put your main code here, to run repeatedly
   if (ultrasonic.getDistance() < 150)
   {
+    noTargetCount = 0;
+    isShooting = true;
+    shooterStartTime = millis();
     led.setColor(led.BLUE);
     shooter.ShooterMovement(200);
     Serial.println("shooting");
-    shooterStartTime = millis();
-    if (millis() - shooterStartTime > 1000)
+    if (millis() - shooterStartTime >= 1000)
     {
       led.setColor(led.GREEN);
     }
   }
   if (ultrasonic.getDistance() >= 150)
   {
-    led.setColor(led.RED);
-    shooter.ShooterMovement(0);
-    Serial.println("not shooting");
-    delay(1000);
+    isShooting = false;
+    if (isShooting && !lastIsShooting)
+    {
+      noTargetCount++;
+    }
+    if (noTargetCount >= 20)
+    {
+      led.setColor(led.RED);
+      shooter.ShooterMovement(0);
+      Serial.println("not shooting");
+    }
+    Serial.print("current Distance: ");
+    Serial.println(ultrasonic.getDistance());
+    lastIsShooting = isShooting;
   }
-  Serial.print("current Distance: ");
-  Serial.println(ultrasonic.getDistance());
 }
