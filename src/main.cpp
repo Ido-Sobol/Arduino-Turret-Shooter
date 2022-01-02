@@ -55,7 +55,6 @@ void setup()
   led.ledInit(redPin, greenPin, bluePin);
   controls.ControlsInit(shootButtonPin, potenPin);
   led.setColor(led.BLUE);
-  pinMode(5, OUTPUT);
 }
 
 void loop()
