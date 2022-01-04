@@ -23,25 +23,10 @@ const int shooterPin = 6;        //pwm
 const int redPin = 8;            //digital out
 const int greenPin = 12;         //digital out
 const int bluePin = 13;          //digital out
+
 //shooter:
-double shooterPower;
-const double shooterMagicNumber = 0;
-bool lastButtonState;
-
-//Timing vars:
-double shooterWheelsStartTime;
-const double shooterWheelsDelayTime = 4000;
-
-double timeSinceLastSwitch = 5000; //TODO: need to check this logic
-const double switchDelay = 4000;
-
-int turretCurrentPin;
-double turretPower;
+const double shooterPower = 200;
 double shooterStartTime;
-double currentDistance;
-double lastDistanceMeasured;
-double targetDistance;
-bool detectedPossibleTarget = false;
 int targetCount = 0;
 bool isShooting;
 bool lastIsShooting;
@@ -68,13 +53,9 @@ void loop()
     noTargetCount = 0;
     isShooting = true;
     shooterStartTime = millis();
-    led.setColor(led.BLUE);
-    shooter.ShooterMovement(200);
+    led.setColor(millis() - shooterStartTime >= 1000 ? led.GREEN : led.BLUE);
+    shooter.ShooterMovement(shooterPower);
     Serial.println("shooting");
-    if (millis() - shooterStartTime >= 1000)
-    {
-      led.setColor(led.GREEN);
-    }
   }
   if (ultrasonic.getDistance() >= 150)
   {
