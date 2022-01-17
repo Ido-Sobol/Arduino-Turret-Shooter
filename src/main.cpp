@@ -5,14 +5,12 @@
 #include <shooter.h>
 #include <LED.h>
 #include <Servo.h>
-#include <Controls.h>
 //creating all of the objects:
 UltraSonic ultrasonic;
 Turret turret;
 Shooter shooter;
 LED led;
 Servo shooterServo;
-Controls controls;
 
 //defining all of the pins:
 const int rightButtonPin = 7;    //digital in
@@ -56,54 +54,9 @@ void setup()
   shooter.ShooterInit(shooterPin);
   led.ledInit(redPin, greenPin, bluePin);
   shooterServo.attach(servoPin);
-  controls.ControlsInit(rightButtonPin, leftButtonPin, shootButtonPin, potenPin);
 }
 
 void loop()
 {
   // put your main code here, to run repeatedly
-  shooterServo.write(servoBlockPosition);
-  shooter.ShooterMovement(0);
-  led.setColor(led.BLUE);
-
-    turretPower = (controls.getPotentiometer(potenPin));
-    if (controls.getButton(rightButtonPin))
-    {
-      turret.turretMovement(turretForwardPin, turretPower);
-      turret.turretMovement(turretReversePin, 0);
-    }
-    else if (controls.getButton(leftButtonPin))
-    {
-      turret.turretMovement(turretReversePin, turretPower);
-      turret.turretMovement(turretForwardPin, 0);
-    }
-    else
-    {
-      turret.turretMovement(turretReversePin, 0);
-      turret.turretMovement(turretForwardPin, 0);
-    }
-  
-
-  /*controls.getPotentiometer(potenPin) * (1023 / 255))*/
-
-  if (!controls.getButton(shootButtonPin) && shootButtonLastState)
-  {
-    Serial.println("State change detection!");
-    shooterWheelsStartTime = millis();
-    while (millis() - shooterWheelsStartTime <= shooterWheelsDelayTime)
-    {
-      shooter.ShooterMovement(ultrasonic.getDistance() * shooterMagicNumber);
-      led.setColor(led.RED);
-    }
-
-    servoMovingTime = millis();
-    while (millis() - servoMovingTime <= servoMovingDelayTime)
-    {
-
-      led.setColor(led.GREEN);
-      shooterServo.write(servoFreePosition);
-      shooter.ShooterMovement(ultrasonic.getDistance() * shooterMagicNumber);
-    }
-  }
-  shootButtonLastState = controls.getButton(shootButtonPin);
 }
