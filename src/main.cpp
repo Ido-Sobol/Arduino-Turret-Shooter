@@ -4,13 +4,13 @@
 #include <turret.h>
 #include <shooter.h>
 #include <LED.h>
-#include <Controls.h>
+#include <Servo.h>
 //creating all of the objects:
 UltraSonic ultrasonic;
 Turret turret;
 Shooter shooter;
 LED led;
-Controls controls;
+Servo shooterServo;
 
 //defining all of the pins:
 const int shootButtonPin = 0;    //digital in
@@ -53,49 +53,9 @@ void setup()
   turret.turretInit(turretForwardPin, turretReversePin);
   shooter.ShooterInit(shooterPin);
   led.ledInit(redPin, greenPin, bluePin);
-  controls.ControlsInit(shootButtonPin, potenPin);
-  led.setColor(led.BLUE);
 }
 
 void loop()
 {
   // put your main code here, to run repeatedly
-  if (millis() - timeSinceLastSwitch <= switchDelay)
-  {
-    if (turretCurrentPin == turretForwardPin)
-    {
-      turretCurrentPin = turretReversePin;
-    }
-    else
-    {
-      turretCurrentPin = turretForwardPin;
-    }
-  }
-  turret.turretMovement(turretCurrentPin, turretPower);
-  if (controls.getButton(shootButtonPin) && lastButtonState)
-  {
-    currentDistance = ultrasonic.getDistance();
-    if (abs(currentDistance - lastDistanceMeasured) > 100)
-    {
-      detectedPossibleTarget = true;
-      led.setColor(led.WHITE);
-    }
-    if (abs(targetDistance - currentDistance) < 20)
-    {
-      targetCount++;
-    }
-    if (detectedPossibleTarget && targetCount >= 10)
-    {
-      targetCount = 0;
-      led.setColor(led.RED);
-      shooter.ShooterMovement(80);
-      shooterWheelsStartTime = millis();
-    }
-    if (millis() - shooterWheelsStartTime <= shooterWheelsDelayTime)
-    {
-      led.setColor(led.GREEN);
-    }
-    lastDistanceMeasured = currentDistance;
-    lastButtonState = controls.getButton(shootButtonPin);
-  }
 }
