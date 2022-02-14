@@ -10,7 +10,20 @@ void Turret::turretInit(int forwardPin, int reversedPin)
     Serial.println("turret initialized!");
 }
 
-void Turret::turretMovement(int pin, int power)
+void Turret::turretMovement(bool forward, int power)
 {
-    analogWrite(pin, abs(power));
+    if (forward)
+    {
+        analogWrite(_forwardPin, power);
+        analogWrite(_reversePin, 0);
+    }else{
+        analogWrite(_reversePin, power);
+        analogWrite(_forwardPin, 0);
+    }
+    
+}
+
+void Turret::stop(){
+    analogWrite(_forwardPin, 0);
+    analogWrite(_reversePin, 0);
 }

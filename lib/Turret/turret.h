@@ -7,7 +7,8 @@ class Turret
 {
   public:
    void turretInit(int forwardPin, int reversePin); 
-   void turretMovement(int pin , int power);
+   void turretMovement(bool forward , int power);
+   void stop();
   private:
     int _forwardPin;
     int _reversePin;

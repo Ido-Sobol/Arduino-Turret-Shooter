@@ -16,9 +16,9 @@ const int shootButtonPin = 0;    //digital in
 const int potenPin = A0;         //analog in
 const int trigPin = 3;           //pwm
 const int echoPin = 2;           //digital out
-const int turretForwardPin = 10; //pwm
-const int turretReversePin = 11; //pwm
-const int shooterPin = 5;        //pwm
+const int turretForwardPin = 9; //pwm
+const int turretReversePin = 5; //pwm
+const int shooterPin = 6;        //pwm
 const int redPin = 8;            //digital out
 const int greenPin = 12;         //digital out
 const int bluePin = 13;          //digital out
@@ -26,22 +26,15 @@ const int bluePin = 13;          //digital out
 double shooterPower;
 const double shooterMagicNumber = 0;
 bool lastButtonState;
+int cycleCounter = 0;
 
 //Timing vars:
-double shooterWheelsStartTime;
-const double shooterWheelsDelayTime = 4000;
 
-double timeSinceLastSwitch = 5000; //TODO: need to check this logic
-const double switchDelay = 4000;
+double switchTime = 0;
+const double switchDelay = 3000;
 
-int turretCurrentPin;
-double turretPower;
 
-double currentDistance;
-double lastDistanceMeasured;
-double targetDistance;
-bool detectedPossibleTarget = false;
-int targetCount = 0;
+bool turretPin = false;
 
 void setup()
 {
@@ -53,8 +46,30 @@ void setup()
   shooter.ShooterInit(shooterPin);
   led.ledInit(redPin, greenPin, bluePin);
 }
-
 void loop()
 {
   // put your main code here, to run repeatedly
+//  analogWrite(turretForwardPin , 120);
+//  delay(500);
+led.setColor(led.BLUE);
+turret.turretMovement(turretPin, 110);
+if (millis() - switchTime >= switchDelay)
+{
+  turretPin = !turretPin;
+  switchTime = millis();
+}
+if (ultrasonic.getDistance() < 200) // * in cm
+{
+  cycleCounter++;
+  if(cycleCounter > 5){
+  while (true)
+  {
+    led.setColor(led.GREEN);
+    turret.stop();
+    shooter.ShooterMovement(200);
+  }
+  }
+}else{
+  cycleCounter = 0;
+}
 }
