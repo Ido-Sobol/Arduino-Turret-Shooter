@@ -10,7 +10,6 @@ UltraSonic ultrasonic;
 Turret turret;
 Shooter shooter;
 LED led;
-Servo shooterServo;
 
 //defining all of the pins:
 const int shootButtonPin = 0;    //digital in
