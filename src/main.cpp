@@ -1,38 +1,44 @@
-//importing the libraries:
+// importing the libraries:
 #include <Arduino.h>
 #include <ultrasonic.h>
 #include <turret.h>
 #include <shooter.h>
 #include <LED.h>
 #include <Servo.h>
-//creating all of the objects:
+// creating all of the objects:
 UltraSonic ultrasonic;
 Turret turret;
 Shooter shooter;
 LED led;
 
-//defining all of the pins:
-const int shootButtonPin = 0;    //digital in
-const int potenPin = A0;         //analog in
-const int trigPin = 3;           //pwm
-const int echoPin = 2;           //digital out
-const int turretForwardPin = 9; //pwm
-const int turretReversePin = 5; //pwm
-const int shooterPin = 6;        //pwm
-const int redPin = 8;            //digital out
-const int greenPin = 12;         //digital out
-const int bluePin = 13;          //digital out
-//shooter:
-double shooterPower;
-const double shooterMagicNumber = 0;
-bool lastButtonState;
+// defining all of the pins:
+const int shootButtonPin = 0;   // digital in
+const int potenPin = A0;        // analog in
+const int trigPin = 3;          // pwm
+const int echoPin = 2;          // digital out
+const int turretForwardPin = 9; // pwm
+const int turretReversePin = 5; // pwm
+const int shooterPin = 6;       // pwm
+const int redPin = 8;           // digital out
+const int greenPin = 12;        // digital out
+const int bluePin = 13;         // digital out
+
 int cycleCounter = 0;
+int notSeeingTargetCycleCounter = 0;
 
-//Timing vars:
+// Timing vars:
 
-double switchTime = 0;
 const double switchDelay = 3000;
+double switchTime = 0;
 
+const double wheelsAccDelay = 2000;
+double shooterWheelsStartTime = 0;
+
+double seeingTargetTime;
+double noLongerSeeingTargetTime;
+double targetTime = 0;
+double halfTargetTime;
+double changeDirectionTime;
 
 bool turretPin = false;
 
@@ -49,27 +55,56 @@ void setup()
 void loop()
 {
   // put your main code here, to run repeatedly
-//  analogWrite(turretForwardPin , 120);
-//  delay(500);
-led.setColor(led.BLUE);
-turret.turretMovement(turretPin, 110);
-if (millis() - switchTime >= switchDelay)
-{
-  turretPin = !turretPin;
-  switchTime = millis();
-}
-if (ultrasonic.getDistance() < 200) // * in cm
-{
-  cycleCounter++;
-  if(cycleCounter > 5){
-  while (true)
+  //  analogWrite(turretForwardPin , 120);
+  //  delay(500);
+  led.setColor(led.BLUE);
+  turret.turretMovement(turretPin, 110);
+  if (millis() - switchTime >= switchDelay)
   {
-    led.setColor(led.GREEN);
-    turret.stop();
-    shooter.ShooterMovement(200);
+    turretPin = !turretPin;
+    switchTime = millis();
   }
+  if (ultrasonic.getDistance() < 200) // * in cm
+  {
+    cycleCounter++;
+    if (cycleCounter > 5)
+    {
+      shooterWheelsStartTime = millis();
+      seeingTargetTime = millis();
+      while (true)
+      {
+        led.setColor(led.MAGENTA);
+        if (ultrasonic.getDistance() > 400) // in cm
+        {
+          notSeeingTargetCycleCounter++;
+        }
+        else
+        {
+          notSeeingTargetCycleCounter = 0;
+        }
+        if (notSeeingTargetCycleCounter >= 5)
+        {
+          noLongerSeeingTargetTime = millis();
+
+          targetTime = noLongerSeeingTargetTime - seeingTargetTime;
+          halfTargetTime = targetTime / 2;
+          changeDirectionTime = millis();
+          while (millis() - changeDirectionTime <= halfTargetTime * 2)
+          {
+            turret.turretMovement(!turretPin, 110);
+          }
+          while (true)
+          {
+            turret.stop();
+            shooter.ShooterMovement(200);
+            led.setColor(led.GREEN);
+          }
+        }
+      }
+    }
   }
-}else{
-  cycleCounter = 0;
-}
+  else
+  {
+    cycleCounter = 0;
+  }
 }

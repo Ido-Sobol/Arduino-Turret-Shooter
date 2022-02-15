@@ -12,7 +12,9 @@ public:
         GREEN,
         BLUE,
         WHITE,
-        NOTHING
+        NOTHING,
+        YELLOW,
+        MAGENTA
     };
     Color color;
     void ledInit(int RED, int GREEN, int BLUE);

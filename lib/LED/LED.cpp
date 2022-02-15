@@ -30,6 +30,14 @@ void LED::setColor(Color color)
         digitalWrite(_GREEN, LOW);
         digitalWrite(_BLUE, HIGH);
         break;
+    case YELLOW:
+        digitalWrite(_RED, HIGH);
+        digitalWrite(_GREEN, HIGH);
+        digitalWrite(_BLUE, LOW);
+    case MAGENTA:
+        digitalWrite(_RED, HIGH);
+        digitalWrite(_GREEN, LOW);
+        digitalWrite(_BLUE, HIGH);
     case WHITE:
         digitalWrite(_RED, HIGH);
         digitalWrite(_GREEN, HIGH);
