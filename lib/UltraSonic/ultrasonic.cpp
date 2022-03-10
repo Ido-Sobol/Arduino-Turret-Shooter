@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <ultrasonic.h>
 
-void UltraSonic::UltraSonicInit(int echoPin, int trigPin)
+UltraSonic::UltraSonic(const int echoPin, const int trigPin)
 {
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);

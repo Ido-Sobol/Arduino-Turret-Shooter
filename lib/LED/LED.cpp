@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <LED.h>
 
-void LED::ledInit(int RED, int GREEN, int BLUE)
+LED::LED(int RED, int GREEN, int BLUE)
 {
     _RED = RED;
     _BLUE = BLUE;

@@ -6,7 +6,7 @@
 class UltraSonic
 {
 public:
-  void UltraSonicInit(int trigPin, int echoPin);
+  UltraSonic(const int trigPin, const int echoPin);
   double getDistance();
 
 private:
