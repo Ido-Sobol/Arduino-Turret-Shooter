@@ -1,15 +1,14 @@
 // importing the libraries:
 #include <Arduino.h>
 #include <ultrasonic.h>
-#include <turret.h>
-#include <shooter.h>
 #include <LED.h>
 #include <Servo.h>
+#include <Motor.h>
 // creating all of the objects:
-UltraSonic ultrasonic;
-Turret turret;
-Shooter shooter;
-LED led;
+UltraSonic ultrasonic(echoPin, trigPin);
+Motor turret(turretForwardPin, turretReversePin, "turret");
+Motor shooter(shooterPin, -1, "shooter wheels");
+LED led(redPin, greenPin, bluePin);
 
 // defining all of the pins:
 const int shootButtonPin = 0;   // digital in
@@ -47,10 +46,6 @@ void setup()
   // put your setup code here, to run once:
   delay(2000);
   Serial.begin(9600);
-  ultrasonic.UltraSonicInit(trigPin, echoPin);
-  turret.turretInit(turretForwardPin, turretReversePin);
-  shooter.ShooterInit(shooterPin);
-  led.ledInit(redPin, greenPin, bluePin);
 }
 void loop()
 {
@@ -58,7 +53,7 @@ void loop()
   //  analogWrite(turretForwardPin , 120);
   //  delay(500);
   led.setColor(led.BLUE);
-  turret.turretMovement(turretPin, 110);
+  turret.percentOutput(0.43f);
   if (millis() - switchTime >= switchDelay)
   {
     turretPin = !turretPin;
@@ -91,12 +86,12 @@ void loop()
           changeDirectionTime = millis();
           while (millis() - changeDirectionTime <= halfTargetTime * 2)
           {
-            turret.turretMovement(!turretPin, 110);
+            turret.percentOutput(0.43f);
           }
           while (true)
           {
             turret.stop();
-            shooter.ShooterMovement(200);
+            shooter.percentOutput(0.8f);
             led.setColor(led.GREEN);
           }
         }
