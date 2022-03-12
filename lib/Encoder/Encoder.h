@@ -6,10 +6,13 @@
 class Encoder
 {
 public:
-    void EncoderInit();
+    Encoder(int _ticksPerRound, int counterPin, int directionPin);
     int getTicks();
-    bool switchDirection();
+    float getVelocity();
 
 private:
+    int _ticksPerRound;
+    int _counterPin;
+    int _directionPin;
 };
 #endif

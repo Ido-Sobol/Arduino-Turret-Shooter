@@ -2,14 +2,13 @@
 #include <Arduino.h>
 #include <ultrasonic.h>
 #include <LED.h>
-#include <Servo.h>
 #include <Motor.h>
+#include <Encoder.h>
 // creating all of the objects:
 UltraSonic ultrasonic(echoPin, trigPin);
 Motor turret(turretForwardPin, turretReversePin, "turret");
 Motor shooter(shooterPin, -1, "shooter wheels");
 LED led(redPin, greenPin, bluePin);
-
 // defining all of the pins:
 const int shootButtonPin = 0;   // digital in
 const int potenPin = A0;        // analog in
