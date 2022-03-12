@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <motor.h>
+#include <Motor.h>
 
 Motor::Motor(const int forwardPin, const int reversedPin, String motorName)
 {
@@ -20,6 +20,14 @@ void Motor::percentOutput(float power) // from -1 to 1
     {
         analogWrite(power > 0 ? _forwardPin : _reversePin, abs(power) * 255);
     }
+}
+
+void Motor::positionControl()
+{
+}
+
+void Motor::velocityControl()
+{
 }
 
 void Motor::stop()

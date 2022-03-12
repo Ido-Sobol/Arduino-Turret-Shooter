@@ -2,12 +2,11 @@
 #define Motor_h
 
 #include <Arduino.h>
-#include <Encoder.h>
 
 class Motor
 {
 public:
-    Motor(const int forwardPin, const int reversePin, Encoder encoder, String motorName);
+    Motor(const int forwardPin, const int reversePin, String motorName);
     void percentOutput(float power);
     void positionControl();
     void velocityControl();
@@ -16,6 +15,5 @@ public:
 private:
     int _forwardPin;
     int _reversePin;
-    Encoder _encoder;
 };
 #endif
