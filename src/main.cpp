@@ -6,105 +6,49 @@
 #include <LED.h>
 #include <Servo.h>
 // creating all of the objects:
-UltraSonic ultrasonic;
-Turret turret;
-Shooter shooter;
-LED led;
+const int white1 = 0;    // TODO: define it
+const int white2 = 0;    // TODO: define it
+const int white3 = 0;    // TODO: define it
+const int red1 = 0;      // TODO: define it
+const int red2 = 0;      // TODO: define it
+const int rightTrig = 0; // TODO: define it
+const int rightEcho = 0; // TODO: define it
+const int leftTrig = 0;  // TODO: define it
+const int leftEcho = 0;  // TODO: define it
 
-// defining all of the pins:
-const int shootButtonPin = 0;   // digital in
-const int potenPin = A0;        // analog in
-const int trigPin = 3;          // pwm
-const int echoPin = 2;          // digital out
-const int turretForwardPin = 9; // pwm
-const int turretReversePin = 5; // pwm
-const int shooterPin = 6;       // pwm
-const int redPin = 8;           // digital out
-const int greenPin = 12;        // digital out
-const int bluePin = 13;         // digital out
+const int distToBlinkRight = 27;
+const int distToBlinkLeft = 15;
 
-int cycleCounter = 0;
-int notSeeingTargetCycleCounter = 0;
-
-// Timing vars:
-
-const double switchDelay = 3000;
-double switchTime = 0;
-
-const double wheelsAccDelay = 2000;
-double shooterWheelsStartTime = 0;
-
-double seeingTargetTime;
-double noLongerSeeingTargetTime;
-double targetTime = 0;
-double halfTargetTime;
-double changeDirectionTime;
-
-bool turretPin = false;
-
+UltraSonic left;
+UltraSonic right;
 void setup()
 {
   // put your setup code here, to run once:
   delay(2000);
   Serial.begin(9600);
-  ultrasonic.UltraSonicInit(trigPin, echoPin);
-  turret.turretInit(turretForwardPin, turretReversePin);
-  shooter.ShooterInit(shooterPin);
-  led.ledInit(redPin, greenPin, bluePin);
+  left.UltraSonicInit(leftTrig, leftEcho);
+  right.UltraSonicInit(rightTrig, rightEcho);
+  pinMode(white1, OUTPUT);
+  pinMode(white2, OUTPUT);
+  pinMode(white3, OUTPUT);
+  pinMode(red1, OUTPUT);
+  pinMode(red2, OUTPUT);
 }
 void loop()
 {
   // put your main code here, to run repeatedly
-  //  analogWrite(turretForwardPin , 120);
-  //  delay(500);
-  led.setColor(led.BLUE);
-  turret.turretMovement(turretPin, 110);
-  if (millis() - switchTime >= switchDelay)
+  digitalWrite(white1, HIGH);
+  digitalWrite(white2, HIGH);
+  digitalWrite(white3, HIGH);
+  if (left.getDistance() < distToBlinkLeft || right.getDistance() < distToBlinkRight)
   {
-    turretPin = !turretPin;
-    switchTime = millis();
-  }
-  if (ultrasonic.getDistance() < 200) // * in cm
-  {
-    cycleCounter++;
-    if (cycleCounter > 5)
-    {
-      shooterWheelsStartTime = millis();
-      seeingTargetTime = millis();
-      while (true)
-      {
-        led.setColor(led.MAGENTA);
-        if (ultrasonic.getDistance() > 400) // in cm
-        {
-          notSeeingTargetCycleCounter++;
-        }
-        else
-        {
-          notSeeingTargetCycleCounter = 0;
-        }
-        if (notSeeingTargetCycleCounter >= 5)
-        {
-          noLongerSeeingTargetTime = millis();
-
-          targetTime = noLongerSeeingTargetTime - seeingTargetTime;
-          halfTargetTime = targetTime / 2;
-          changeDirectionTime = millis();
-          while (millis() - changeDirectionTime <= halfTargetTime * 2)
-          {
-            turret.turretMovement(!turretPin, 110);
-          }
-          while (true)
-          {
-            turret.stop();
-            shooter.ShooterMovement(200);
-            led.setColor(led.GREEN);
-          }
-        }
-      }
-    }
+    digitalWrite(red1, HIGH);
+    digitalWrite(red2, HIGH);
+    delay(5000);
   }
   else
   {
-    cycleCounter = 0;
+    digitalWrite(red1, LOW);
+    digitalWrite(red2, LOW);
   }
 }
