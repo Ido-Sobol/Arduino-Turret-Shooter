@@ -6,16 +6,18 @@
 class LED
 {
 public:
+    LED(int RED, int green, int blue);
     enum Color
     {
         RED,
         GREEN,
         BLUE,
         WHITE,
-        NOTHING
+        MAGENTA,
+        NOTHING,
+        YELLOW,
     };
     Color color;
-    void ledInit(int RED, int GREEN, int BLUE);
     void setColor(Color color);
 
 private:

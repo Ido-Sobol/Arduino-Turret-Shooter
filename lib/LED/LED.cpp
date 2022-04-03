@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <LED.h>
 
-void LED::ledInit(int RED, int GREEN, int BLUE)
+LED::LED(int RED, int GREEN, int BLUE)
 {
     _RED = RED;
     _BLUE = BLUE;
@@ -13,34 +13,46 @@ void LED::ledInit(int RED, int GREEN, int BLUE)
 
 void LED::setColor(Color color)
 {
-    switch (color)
+    if (color == RED)
     {
-    case RED:
         digitalWrite(_RED, HIGH);
         digitalWrite(_GREEN, LOW);
         digitalWrite(_BLUE, LOW);
-        break;
-    case GREEN:
+    }
+    else if (color == GREEN)
+    {
         digitalWrite(_RED, LOW);
         digitalWrite(_GREEN, HIGH);
         digitalWrite(_BLUE, LOW);
-        break;
-    case BLUE:
+    }
+    else if (color == BLUE)
+    {
         digitalWrite(_RED, LOW);
         digitalWrite(_GREEN, LOW);
         digitalWrite(_BLUE, HIGH);
-        break;
-    case WHITE:
+    }
+    else if (color == YELLOW)
+    {
+        digitalWrite(_RED, HIGH);
+        digitalWrite(_GREEN, HIGH);
+        digitalWrite(_BLUE, LOW);
+    }
+    else if (color == MAGENTA)
+    {
+        digitalWrite(_RED, HIGH);
+        digitalWrite(_GREEN, LOW);
+        digitalWrite(_BLUE, HIGH);
+    }
+    else if (color == WHITE)
+    {
         digitalWrite(_RED, HIGH);
         digitalWrite(_GREEN, HIGH);
         digitalWrite(_BLUE, HIGH);
-        break;
-    case NOTHING:
+    }
+    else if (color == NOTHING)
+    {
         digitalWrite(_RED, LOW);
         digitalWrite(_GREEN, LOW);
         digitalWrite(_BLUE, LOW);
-        break;
-    default:
-        break;
     }
 }
