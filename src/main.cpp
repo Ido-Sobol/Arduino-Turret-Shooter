@@ -4,11 +4,6 @@
 #include <LED.h>
 #include <Motor.h>
 #include <Encoder.h>
-// creating all of the objects:
-UltraSonic ultrasonic(echoPin, trigPin);
-Motor turret(turretForwardPin, turretReversePin, "turret");
-Motor shooter(shooterPin, -1, "shooter wheels");
-LED led(redPin, greenPin, bluePin);
 // defining all of the pins:
 const int shootButtonPin = 0;   // digital in
 const int potenPin = A0;        // analog in
@@ -20,6 +15,12 @@ const int shooterPin = 6;       // pwm
 const int redPin = 8;           // digital out
 const int greenPin = 12;        // digital out
 const int bluePin = 13;         // digital out
+
+// creating all of the objects:
+UltraSonic ultrasonic(echoPin, trigPin);
+Motor turret(turretForwardPin, turretReversePin, "turret");
+Motor shooter(shooterPin, -1, "shooter wheels");
+LED led(redPin, greenPin, bluePin);
 
 int cycleCounter = 0;
 int notSeeingTargetCycleCounter = 0;
@@ -43,16 +44,21 @@ bool turretPin = false;
 void setup()
 {
   // put your setup code here, to run once:
-  delay(2000);
+  led.setColor(led.RED);
+  delay(250);
+  led.setColor(led.GREEN);
+  delay(250);
+  led.setColor(led.BLUE);
+  delay(250);
   Serial.begin(9600);
+  led.setColor(led.NOTHING);
+  delay(1000);
 }
 void loop()
 {
   // put your main code here, to run repeatedly
-  //  analogWrite(turretForwardPin , 120);
-  //  delay(500);
   led.setColor(led.BLUE);
-  turret.percentOutput(0.43f);
+  turret.percentOutput(0.4f);
   if (millis() - switchTime >= switchDelay)
   {
     turretPin = !turretPin;
@@ -71,21 +77,23 @@ void loop()
         if (ultrasonic.getDistance() > 400) // in cm
         {
           notSeeingTargetCycleCounter++;
+          led.setColor(led.WHITE);
         }
         else
         {
           notSeeingTargetCycleCounter = 0;
+          turret.percentOutput(0.4);
         }
-        if (notSeeingTargetCycleCounter >= 5)
+        if (notSeeingTargetCycleCounter >= 10)
         {
           noLongerSeeingTargetTime = millis();
-
+          led.setColor(led.YELLOW);
           targetTime = noLongerSeeingTargetTime - seeingTargetTime;
           halfTargetTime = targetTime / 2;
           changeDirectionTime = millis();
           while (millis() - changeDirectionTime <= halfTargetTime * 2)
           {
-            turret.percentOutput(0.43f);
+            turret.percentOutput(-0.4);
           }
           while (true)
           {
