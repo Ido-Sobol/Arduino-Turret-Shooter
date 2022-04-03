@@ -13,9 +13,9 @@ public:
         GREEN,
         BLUE,
         WHITE,
+        MAGENTA,
         NOTHING,
         YELLOW,
-        MAGENTA
     };
     Color color;
     void setColor(Color color);

@@ -13,42 +13,46 @@ LED::LED(int RED, int GREEN, int BLUE)
 
 void LED::setColor(Color color)
 {
-    switch (color)
+    if (color == RED)
     {
-    case RED:
         digitalWrite(_RED, HIGH);
         digitalWrite(_GREEN, LOW);
         digitalWrite(_BLUE, LOW);
-        break;
-    case GREEN:
+    }
+    else if (color == GREEN)
+    {
         digitalWrite(_RED, LOW);
         digitalWrite(_GREEN, HIGH);
         digitalWrite(_BLUE, LOW);
-        break;
-    case BLUE:
+    }
+    else if (color == BLUE)
+    {
         digitalWrite(_RED, LOW);
         digitalWrite(_GREEN, LOW);
         digitalWrite(_BLUE, HIGH);
-        break;
-    case YELLOW:
+    }
+    else if (color == YELLOW)
+    {
         digitalWrite(_RED, HIGH);
         digitalWrite(_GREEN, HIGH);
         digitalWrite(_BLUE, LOW);
-    case MAGENTA:
+    }
+    else if (color == MAGENTA)
+    {
         digitalWrite(_RED, HIGH);
         digitalWrite(_GREEN, LOW);
         digitalWrite(_BLUE, HIGH);
-    case WHITE:
+    }
+    else if (color == WHITE)
+    {
         digitalWrite(_RED, HIGH);
         digitalWrite(_GREEN, HIGH);
         digitalWrite(_BLUE, HIGH);
-        break;
-    case NOTHING:
+    }
+    else if (color == NOTHING)
+    {
         digitalWrite(_RED, LOW);
         digitalWrite(_GREEN, LOW);
         digitalWrite(_BLUE, LOW);
-        break;
-    default:
-        break;
     }
 }
