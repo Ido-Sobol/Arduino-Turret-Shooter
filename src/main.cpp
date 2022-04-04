@@ -7,7 +7,7 @@
 #include <Servo.h>
 // creating all of the objects:
 const int led = 7;        // TODO: define it
-const int red = 8;        // TODO: define it
+const int red = 8;        // TODO define it
 const int rightTrig = A1; // TODO: define it
 const int rightEcho = 9;  // TODO: define it
 const int leftTrig = A0;  // TODO: define it
@@ -15,6 +15,9 @@ const int leftEcho = 10;  // TODO: define it
 
 const int distToBlinkRight = 27; // * in cm
 const int distToBlinkLeft = 15;
+
+int leftCounter = 0;
+int rightCounter = 0;
 
 UltraSonic left;
 UltraSonic right;
@@ -32,13 +35,25 @@ void loop()
 {
   // put your main code here, to run repeatedly
   digitalWrite(led, HIGH);
-  if (left.getDistance() < distToBlinkLeft || right.getDistance() < distToBlinkRight)
+  digitalWrite(red, turnAlarmOn());
+}
+boolean turnAlarmOn()
+{
+  if (left.getDistance() < distToBlinkLeft)
   {
-    digitalWrite(red, HIGH);
-    delay(5000);
+    leftCounter++;
   }
   else
   {
-    digitalWrite(red, LOW);
+    leftCounter = 0;
   }
+  if (right.getDistance() < distToBlinkRight)
+  {
+    rightCounter++;
+  }
+  else
+  {
+    rightCounter = 0;
+  }
+  return rightCounter > 10 || leftCounter > 10;
 }
