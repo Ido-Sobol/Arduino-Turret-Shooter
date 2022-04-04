@@ -6,17 +6,14 @@
 #include <LED.h>
 #include <Servo.h>
 // creating all of the objects:
-const int white1 = 0;    // TODO: define it
-const int white2 = 0;    // TODO: define it
-const int white3 = 0;    // TODO: define it
-const int red1 = 0;      // TODO: define it
-const int red2 = 0;      // TODO: define it
-const int rightTrig = 0; // TODO: define it
-const int rightEcho = 0; // TODO: define it
-const int leftTrig = 0;  // TODO: define it
-const int leftEcho = 0;  // TODO: define it
+const int led = 7;        // TODO: define it
+const int red = 8;        // TODO: define it
+const int rightTrig = A1; // TODO: define it
+const int rightEcho = 9;  // TODO: define it
+const int leftTrig = A0;  // TODO: define it
+const int leftEcho = 10;  // TODO: define it
 
-const int distToBlinkRight = 27;
+const int distToBlinkRight = 27; // * in cm
 const int distToBlinkLeft = 15;
 
 UltraSonic left;
@@ -28,27 +25,20 @@ void setup()
   Serial.begin(9600);
   left.UltraSonicInit(leftTrig, leftEcho);
   right.UltraSonicInit(rightTrig, rightEcho);
-  pinMode(white1, OUTPUT);
-  pinMode(white2, OUTPUT);
-  pinMode(white3, OUTPUT);
-  pinMode(red1, OUTPUT);
-  pinMode(red2, OUTPUT);
+  pinMode(led, OUTPUT);
+  pinMode(red, OUTPUT);
 }
 void loop()
 {
   // put your main code here, to run repeatedly
-  digitalWrite(white1, HIGH);
-  digitalWrite(white2, HIGH);
-  digitalWrite(white3, HIGH);
+  digitalWrite(led, HIGH);
   if (left.getDistance() < distToBlinkLeft || right.getDistance() < distToBlinkRight)
   {
-    digitalWrite(red1, HIGH);
-    digitalWrite(red2, HIGH);
+    digitalWrite(red, HIGH);
     delay(5000);
   }
   else
   {
-    digitalWrite(red1, LOW);
-    digitalWrite(red2, LOW);
+    digitalWrite(red, LOW);
   }
 }
