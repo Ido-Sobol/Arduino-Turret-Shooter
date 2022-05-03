@@ -1,16 +1,22 @@
 #include <Arduino.h>
 #include <Encoder.h>
 
-void Encoder::EncoderInit()
+void Encoder::encoderInit(int encoderPin)
 {
-    //TODO: implement
+    _encoderPin = encoderPin;
 }
 
-int Encoder::getTicks()
+double Encoder::getTicks()
 {
-    //TODO: implement
+    return ticks;
 }
 
-bool Encoder::switchDirection()
+void Encoder::update()
 {
+    encoderState = digitalRead(_encoderPin);
+    if (encoderState != lastEncoderState)
+    {
+        ticks++;
+    }
+    lastEncoderState = encoderState;
 }

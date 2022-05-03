@@ -5,11 +5,13 @@
 #include <shooter.h>
 #include <LED.h>
 #include <Servo.h>
+#include <Encoder.h>
 // creating all of the objects:
 UltraSonic ultrasonic;
 Turret turret;
 Shooter shooter;
 LED led;
+Encoder encoder;
 
 // defining all of the pins:
 const int shootButtonPin = 0;   // digital in
@@ -22,6 +24,7 @@ const int shooterPin = 6;       // pwm
 const int redPin = 8;           // digital out
 const int greenPin = 12;        // digital out
 const int bluePin = 13;         // digital out
+const int encoderPin = 10;
 
 int cycleCounter = 0;
 int notSeeingTargetCycleCounter = 0;
@@ -42,6 +45,15 @@ double changeDirectionTime;
 
 bool turretPin = false;
 
+const double wantedVel = 0.3;
+const double kp = 1.6;
+const double pConstant = 0.2;
+double vel = 0;
+double err;
+double lastTime = 0;
+double lastTicks = 0;
+double lastCheck = 0;
+
 void setup()
 {
   // put your setup code here, to run once:
@@ -51,6 +63,7 @@ void setup()
   turret.turretInit(turretForwardPin, turretReversePin);
   shooter.ShooterInit(shooterPin);
   led.ledInit(redPin, greenPin, bluePin);
+  encoder.encoderInit(encoderPin);
 }
 void loop()
 {
@@ -96,8 +109,29 @@ void loop()
           while (true)
           {
             turret.stop();
-            shooter.ShooterMovement(200);
-            led.setColor(led.GREEN);
+            if (((err * kp + pConstant) * 255) >= 163)
+            {
+              digitalWrite(redPin, HIGH);
+              digitalWrite(greenPin, LOW);
+              digitalWrite(bluePin, HIGH);
+            }
+            else
+            {
+              led.setColor(led.GREEN);
+            }
+
+            shooter.ShooterMovement(((err * kp + pConstant) * 255));
+            encoder.update();
+            if (millis() - lastCheck >= 100)
+            {
+              vel = (encoder.getTicks() - lastTicks) / (millis() - 100);
+              err = wantedVel - vel;
+            }
+
+            // Serial.print("ticks: ");
+            // Serial.print(encoder.getTicks());
+            // Serial.print(" last ticks: ");
+            Serial.println((err * kp + pConstant) * 255);
           }
         }
       }

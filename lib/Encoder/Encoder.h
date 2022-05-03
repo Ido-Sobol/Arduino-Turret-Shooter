@@ -6,10 +6,14 @@
 class Encoder
 {
 public:
-    void EncoderInit();
-    int getTicks();
-    bool switchDirection();
+    void encoderInit(int encoderPin);
+    double getTicks();
+    void update();
 
 private:
+    int ticks;
+    bool encoderState;
+    bool lastEncoderState;
+    int _encoderPin;
 };
 #endif
